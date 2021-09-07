@@ -98,12 +98,12 @@ public class DrawLineChart extends View {
     /**
      * 图表的横坐标最大值
      */
-    private float x_maxVlaue = 12000.0f;
+//    private float x_maxVlaue = 12000.0f;
     /**
      * 图表的横坐标最小值
      */
-    private float x_minValue = 0f;
-    private float current_maxVlaue = 0f;
+//    private float x_minValue = 0f;
+//    private float current_maxVlaue = 0f;
 
     private float min2=5f;
     private float max2=25f;
@@ -118,7 +118,7 @@ public class DrawLineChart extends View {
     /**
      * 要计算的总值
      */
-    private float x_calculateValue;
+
     /**
      * 框线平均值
      */
@@ -130,7 +130,7 @@ public class DrawLineChart extends View {
     /**
      * 横坐标的桩数量
      */
-    private float x_numberLine = 10;
+
     /**
      * 边框线颜色
      */
@@ -252,23 +252,23 @@ public class DrawLineChart extends View {
         this.minValue = minValue;
     }
 
-    public void setCurrent_maxVlaue(float current_maxVlaue) {
-        this.current_maxVlaue = current_maxVlaue;
-    }
+//    public void setCurrent_maxVlaue(float current_maxVlaue) {
+//        this.current_maxVlaue = current_maxVlaue;
+//    }
 
     /**
      * 图表显示最大值
      */
-    public void setX_MaxVlaue(float maxVlaue) {
-        this.x_maxVlaue = maxVlaue;
-    }
+//    public void setX_MaxVlaue(float maxVlaue) {
+//        this.x_maxVlaue = maxVlaue;
+//    }
 
     /**
      * 图表显示最小值
      */
-    public void setX_MinValue(float minValue) {
-        this.x_minValue = minValue;
-    }
+//    public void setX_MinValue(float minValue) {
+//        this.x_minValue = minValue;
+//    }
 
     //范围的上下限
     public void setUpper(float upperValue) {
@@ -289,9 +289,6 @@ public class DrawLineChart extends View {
     /**
      * 图表纵坐标的桩数量
      */
-    public void setX_NumberLine(float numberLine) {
-        this.x_numberLine = numberLine;
-    }
 
     /**
      * 边框线颜色
@@ -448,9 +445,6 @@ public class DrawLineChart extends View {
         /**计算框线横线间隔的数据平均值*/
         averageValue = calculateValue / (numberLine - 1);
 
-        x_calculateValue = x_maxVlaue - x_minValue;
-        /**计算框线横坐标间隔的数据平均值*/
-        x_averageValue = x_calculateValue / (x_numberLine - 1);
 
         initPaint();//什么时候需要init这个东西，才能够让我们的修改有作用...
 
@@ -555,13 +549,8 @@ public class DrawLineChart extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        //如果把width修改了呢？固定成最大值
-//        float actual_width = current_maxVlaue / x_maxVlaue * mNeedDrawWidth;//这里的1200就是训练总时间
 //        mPoints = getPoints(value,mNeedDrawHeight,mNeedDrawWidth,calculateValue,minValue,mBrokenLineLeft,mBrokenLineTop);
         mPoints = updatePoint(value,time, mNeedDrawHeight, mNeedDrawWidth, calculateValue, minValue, mBrokenLineLeft, mBrokenLineTop);
-        x_calculateValue = x_maxVlaue - x_minValue;
-        /**计算框线横坐标间隔的数据平均值*/
-        x_averageValue = x_calculateValue / (x_numberLine - 1);
         /**绘制边框线和边框文本*/
         DrawBorderLineAndText(canvas);
 
@@ -690,7 +679,6 @@ public class DrawLineChart extends View {
         }
 
         /**绘制边框分段横坐标与分段文本*/
-//        float averageWeight = mNeedDrawWidth / (x_numberLine - 1);
         float averageWeight = mNeedDrawWidth * 3/5 / 3;//第一部分，从0~3的weight,把3/5再分成三份
         float nowadayWeight=0;
         float v=0;//1,2,3

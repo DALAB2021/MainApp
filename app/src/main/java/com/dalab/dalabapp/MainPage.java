@@ -38,7 +38,6 @@ public class MainPage extends AppCompatActivity {
     DrawerLayout mDrawerLayout;
     Toolbar toolbar;
     LinearLayout mDrawerContent;
-    LinearLayout textLayout;
     EditText left_up_Low;
     EditText left_up_High;
     EditText right_up_Low;
@@ -59,53 +58,45 @@ public class MainPage extends AppCompatActivity {
     EditText bindPressPunish, bindDelayTime;
     EditText toleranceDelayTime;
 
-    boolean opened=false;
-    //
-    public static int lowerValue = 200;
-    public static int upperValue = 600;
+    boolean opened = false;
 
     //先设定默认值
-    static int left_up_low_def=5;//改成static只是为了能够在下面全局变量赋值的时候能够输入进去，这个值之后本身也不会给用户去修改。
-    static int left_up_high_def=15;
-    static int right_up_low_def=10;
-    static int right_up_high_def=15;
-    static int left_down_low_def=10;
-    static int left_down_high_def=15;
-    static int right_down_low_def=5;
-    static int right_down_high_def=15;
-    static int up_low_def=10;
-    static int up_high_def=35;
-    static int down_low_def=10;
-    static int down_high_def=35;
+    static int left_up_low_def = 5;//改成static只是为了能够在下面全局变量赋值的时候能够输入进去，这个值之后本身也不会给用户去修改。
+    static int left_up_high_def = 15;
+    static int right_up_low_def = 10;
+    static int right_up_high_def = 15;
+    static int left_down_low_def = 10;
+    static int left_down_high_def = 15;
+    static int right_down_low_def = 5;
+    static int right_down_high_def = 15;
+    static int up_low_def = 10;
+    static int up_high_def = 35;
+    static int down_low_def = 10;
+    static int down_high_def = 35;
 
-    static int height_def=175;//cm
-    static int weight_def=65;//kg
+    static int height_def = 175;//cm
+    static int weight_def = 65;//kg
 
     // 时间设置
-     int hoeoTime_def = 20; //20min
-     int bindTime_def = 3; //3min
-     int hoeoValidTime_def = 15;//15min
+    int hoeoTime_def = 20; //20min
+    int bindTime_def = 3; //3min
+    int hoeoValidTime_def = 15;//15min
     // 分数区间设置
-     int hoeoVeryGood_def = 90;
-     int hoeoGood_def = 75;
-     int hoeoNormal_def = 60;
-     int bindVeryGood_def = 90;
-     int bindGood_def = 75;
-     int bindNormal_def = 60;
+    int hoeoVeryGood_def = 90;
+    int hoeoGood_def = 75;
+    int hoeoNormal_def = 60;
+    int bindVeryGood_def = 90;
+    int bindGood_def = 75;
+    int bindNormal_def = 60;
     // 计算公式
-     int hoeoDelayTime_def = 30;
-     int hoeoPressPunish_def = 90;
-     int hoeoReleasePunish_def = 60;
-     int bindPressPunish_def = 80;
-     int bindDelayTime_def = 30;
+    int hoeoDelayTime_def = 30;
+    int hoeoPressPunish_def = 90;
+    int hoeoReleasePunish_def = 60;
+    int bindPressPunish_def = 80;
+    int bindDelayTime_def = 30;
     ListView mylist;
     AlertDialog textTips;
-//    boolean asure=false;
 
-//    //蓝牙相关
-//    private ListView mListView;
-//    private DeviceAdapter mAdapter;
-//    private List<BluetoothDevice> mDeviceList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,11 +104,11 @@ public class MainPage extends AppCompatActivity {
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main_page);
 
-        mDrawerLayout=findViewById(R.id.drawer_layout);
-        mDrawerContent=findViewById(R.id.right_drawer);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        mDrawerContent = findViewById(R.id.right_drawer);
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);//一开始是打开的，不能够自动关闭，但是能够通过代码的方式关闭
         mDrawerLayout.closeDrawer(mDrawerContent);
-        toolbar=findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.menu);
         setSupportActionBar(toolbar);//用我们自定义的toolbar
 
@@ -131,12 +122,10 @@ public class MainPage extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(opened)
-                        {
-                            return;//如果侧边栏是打开状态，那么就提前跳出，不会响应按钮
+                        if (opened) {
+                            return;//如果侧边栏是打开状态，那么就提前跳出，不会响应按钮——防止和底层按钮的冲突
                         }
                         Intent intent = new Intent();
-//                        intent.setClass(MainPage.this, BlueTooth.class);
                         intent.setClass(MainPage.this, Bluno_demo.class);
                         startActivity(intent);
                     }
@@ -152,54 +141,45 @@ public class MainPage extends AppCompatActivity {
                 .setPositiveButton("确认", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(MainPage.this, "已恢复默认设置",Toast.LENGTH_SHORT).show();
-//                        asure=true;//确认
+                        Toast.makeText(MainPage.this, "已恢复默认设置", Toast.LENGTH_SHORT).show();
                         setDef();
                     }
                 })
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(MainPage.this, "取消",Toast.LENGTH_SHORT).show();
-//                        asure=false;//确认
+                        Toast.makeText(MainPage.this, "取消", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .create();
-
-
-        //设备list
-//        mListView = findViewById(R.id.device_list);
-//        mListView.setAdapter(new ListAdapter(MainPage.this));//这里的listAdapter是自己写的类
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);//填充菜单
         //这样就可以保证不会出问题！
         return true;
     }
+
     private class MyOnItemClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position,
                                 long id) {
             Intent intent = new Intent();
-            if(opened)
-            {
-                return;//如果侧边栏是打开状态，那么就提前跳出，不会响应按钮
+            if (opened) {
+                return;//如果侧边栏是打开状态，那么就提前跳出，不会响应按钮——防止和底层按钮的冲突
             }
-            if(position == 0)
-            {
+            if (position == 0) {
                 intent.setClass(MainPage.this, Hemostasis.class);
                 startActivity(intent);
-            }
-            else
-            {
+            } else {
                 intent.setClass(MainPage.this, BindPage.class);
                 startActivity(intent);
             }
         }
     }
 
-    private void HWsetFoucus(final EditText et,final int type)//height 和weight 的值设置。
+    private void HWsetFoucus(final EditText et, final int type)//height 和weight 的值设置。
     {
         et.setOnFocusChangeListener(new android.view.View.
                 OnFocusChangeListener() {
@@ -212,22 +192,22 @@ public class MainPage extends AppCompatActivity {
                     // 此处为失去焦点时的处理内容
                     if (et.getText() != null && !et.getText().toString().equals("")) {
                         int tmp = Integer.parseInt(et.getText().toString());
-                        if(type == 17 && tmp > 60)
+                        if (type == 17 && tmp > 60)
                             tmp = 60;
-                        else if(type == 17 && tmp < 15)
+                        else if (type == 17 && tmp < 15)
                             tmp = 15;
                         setValue(tmp, type);
                         et.setText(String.valueOf(tmp));
                     } else {
-                        setValue(0,type);
+                        setValue(0, type);
                         et.setText("");
                     }
                 }
             }
         });
     }
-    private void setFoucuses(final EditText et, final EditText High, final EditText Low, final int type)
-    {
+
+    private void setFoucuses(final EditText et, final EditText High, final EditText Low, final int type) {
         et.setOnFocusChangeListener(new android.view.View.
                 OnFocusChangeListener() {
             @Override
@@ -257,7 +237,7 @@ public class MainPage extends AppCompatActivity {
                         High.setText("");
                     }
                     if (tmpHigh <= tmpLow) {
-                        tmpHigh = tmpLow  + 1;
+                        tmpHigh = tmpLow + 1;
                         High.setText(String.valueOf(tmpHigh));
                         setValue(tmpHigh, type + 1);
                     }
@@ -265,91 +245,116 @@ public class MainPage extends AppCompatActivity {
             }
         });
     }
+
     // setValue
-    void setValue(int value, int type)
-    {
-        switch (type)
-        {
-            case 1: Global.global.left_up_low_value = value;
+    void setValue(int value, int type) {
+        switch (type) {
+            case 1:
+                Global.global.left_up_low_value = value;
                 break;
-            case 2: Global.global.left_up_high_value = value;
+            case 2:
+                Global.global.left_up_high_value = value;
                 break;
-            case 3: Global.global.right_up_low_value = value;
+            case 3:
+                Global.global.right_up_low_value = value;
                 break;
-            case 4: Global.global.right_up_high_value = value;
+            case 4:
+                Global.global.right_up_high_value = value;
                 break;
-            case 5: Global.global.left_down_low_value = value;
+            case 5:
+                Global.global.left_down_low_value = value;
                 break;
-            case 6: Global.global.left_down_high_value = value;
+            case 6:
+                Global.global.left_down_high_value = value;
                 break;
-            case 7: Global.global.right_down_low_value = value;
+            case 7:
+                Global.global.right_down_low_value = value;
                 break;
-            case 8: Global.global.right_down_high_value = value;
+            case 8:
+                Global.global.right_down_high_value = value;
                 break;
-            case 9: Global.global.up_low_value = value;
+            case 9:
+                Global.global.up_low_value = value;
                 break;
-            case 10: Global.global.up_high_value = value;
+            case 10:
+                Global.global.up_high_value = value;
                 break;
-            case 11: Global.global.down_low_value = value;
+            case 11:
+                Global.global.down_low_value = value;
                 break;
-            case 12: Global.global.down_high_value = value;
+            case 12:
+                Global.global.down_high_value = value;
                 break;
-            case 13: Global.global.height_value = value;
+            case 13:
+                Global.global.height_value = value;
                 break;
-            case 14: Global.global.weight_value = value;
+            case 14:
+                Global.global.weight_value = value;
                 break;
-            case 15:Global.global.bindTime = value;
+            case 15:
+                Global.global.bindTime = value;
                 break;
-            case 16:Global.global.hoeoTime = value;
+            case 16:
+                Global.global.hoeoTime = value;
                 break;
-            case 17: Global.global.hoeoValidTime = value;
+            case 17:
+                Global.global.hoeoValidTime = value;
                 break;
-            case 18:Global.global.hoeoVeryGood = value;
+            case 18:
+                Global.global.hoeoVeryGood = value;
                 break;
-            case 19:Global.global.hoeoGood = value;
+            case 19:
+                Global.global.hoeoGood = value;
                 break;
-            case 20:Global.global.hoeoNormal = value;
+            case 20:
+                Global.global.hoeoNormal = value;
                 break;
-            case 21:Global.global.bindVeryGood = value;
+            case 21:
+                Global.global.bindVeryGood = value;
                 break;
-            case 22:Global.global.bindGood = value;
+            case 22:
+                Global.global.bindGood = value;
                 break;
-            case 23:Global.global.bindNormal = value;
+            case 23:
+                Global.global.bindNormal = value;
                 break;
-            case 24:Global.global.hoeoDelayTime = value;
+            case 24:
+                Global.global.hoeoDelayTime = value;
                 break;
-            case 25:Global.global.hoeoPressPunish = value;
+            case 25:
+                Global.global.hoeoPressPunish = value;
                 break;
-            case 26:Global.global.hoeoReleasePunish = value;
+            case 26:
+                Global.global.hoeoReleasePunish = value;
                 break;
-            case 27:Global.global.bindDelayTime = value;
+            case 27:
+                Global.global.bindDelayTime = value;
                 break;
-            case 28:Global.global.bindPressPunish = value;
+            case 28:
+                Global.global.bindPressPunish = value;
                 break;
-            case 29:Global.global.toleranceDelayTime = value;
+            case 29:
+                Global.global.toleranceDelayTime = value;
                 break;
         }
     }
 
 
-    public void MenuOpenSettings(MenuItem menuItem)
-    {
+    public void MenuOpenSettings(MenuItem menuItem) {
         //这是一个按钮的函数，用来打开侧边栏。之后甚至还可以设置设计一个返回按钮来关闭侧边栏
         mDrawerLayout.openDrawer(mDrawerContent);
-        opened=true;
+        opened = true;
     }
-    public void closeSettings(View view)
-    {
+
+    public void closeSettings(View view) {
         //返回按钮来关闭侧边栏
         mDrawerLayout.closeDrawer(mDrawerContent);
-        opened=false;
+        opened = false;
     }
 
 
-    //解决点击自动关闭的问题
     // tools
-    void repeatFind()
-    {
+    void repeatFind() {
         left_up_Low = findViewById(R.id.left_up_Low);
         left_up_High = findViewById(R.id.left_up_High);
         right_up_Low = findViewById(R.id.right_up_Low);
@@ -380,42 +385,42 @@ public class MainPage extends AppCompatActivity {
         bindPressPunish = findViewById(R.id.bindPressPunish);
         toleranceDelayTime = findViewById(R.id.toleranceDelayTime);
     }
-    void repaetSet()
-    {
+
+    void repaetSet() {
         left_up_Low.setText(String.valueOf(Global.global.left_up_low_value));
         left_up_High.setText(String.valueOf(Global.global.left_up_high_value));
-        setFoucuses(left_up_Low,left_up_High,left_up_Low,1);
-        setFoucuses(left_up_High,left_up_High,left_up_Low,1);
+        setFoucuses(left_up_Low, left_up_High, left_up_Low, 1);
+        setFoucuses(left_up_High, left_up_High, left_up_Low, 1);
 
         right_up_Low.setText(String.valueOf(Global.global.right_up_low_value));
         right_up_High.setText(String.valueOf(Global.global.right_up_high_value));
-        setFoucuses(right_up_Low,right_up_High,right_up_Low,3);
-        setFoucuses(right_up_High,right_up_High,right_up_Low,3);
+        setFoucuses(right_up_Low, right_up_High, right_up_Low, 3);
+        setFoucuses(right_up_High, right_up_High, right_up_Low, 3);
 
         left_down_Low.setText(String.valueOf(Global.global.left_down_low_value));
         left_down_High.setText(String.valueOf(Global.global.left_down_high_value));
-        setFoucuses(left_down_Low,left_down_High,left_down_Low,5);
-        setFoucuses(left_down_High,left_down_High,left_down_Low,5);
+        setFoucuses(left_down_Low, left_down_High, left_down_Low, 5);
+        setFoucuses(left_down_High, left_down_High, left_down_Low, 5);
 
         right_down_Low.setText(String.valueOf(Global.global.right_down_low_value));
         right_down_High.setText(String.valueOf(Global.global.right_down_high_value));
-        setFoucuses(right_down_Low,right_down_High,right_down_Low,7);
-        setFoucuses(right_down_High,right_down_High,right_down_Low,7);
+        setFoucuses(right_down_Low, right_down_High, right_down_Low, 7);
+        setFoucuses(right_down_High, right_down_High, right_down_Low, 7);
 
         up_Low.setText(String.valueOf(Global.global.up_low_value));
         up_High.setText(String.valueOf(Global.global.up_high_value));
-        setFoucuses(up_Low,up_High,up_Low,9);
-        setFoucuses(up_High,up_High,up_Low,9);
+        setFoucuses(up_Low, up_High, up_Low, 9);
+        setFoucuses(up_High, up_High, up_Low, 9);
 
         down_Low.setText(String.valueOf(Global.global.down_low_value));
         down_High.setText(String.valueOf(Global.global.down_high_value));
-        setFoucuses(down_Low,down_High,down_Low,11);
-        setFoucuses(down_High,down_High,down_Low,11);
+        setFoucuses(down_Low, down_High, down_Low, 11);
+        setFoucuses(down_High, down_High, down_Low, 11);
 
         height.setText(String.valueOf(Global.global.height_value));
         weight.setText(String.valueOf(Global.global.weight_value));
-        HWsetFoucus(height,13);
-        HWsetFoucus(weight,14);
+        HWsetFoucus(height, 13);
+        HWsetFoucus(weight, 14);
         HWsetFoucus(bindTime, 15);
         HWsetFoucus(hoeoTime, 16);
         HWsetFoucus(hoeoValidTime, 17);
@@ -437,83 +442,83 @@ public class MainPage extends AppCompatActivity {
     {
         textTips.show();
     }
-    private void setDef()
-    {
+
+    private void setDef() {
         Global.global.left_up_low_value = left_up_low_def;
         left_up_Low.setText(String.valueOf(left_up_low_def));
-        Global.global.left_up_high_value=left_up_high_def;
+        Global.global.left_up_high_value = left_up_high_def;
         left_up_High.setText(String.valueOf(left_up_high_def));
 
-        Global.global.left_down_low_value=left_down_low_def;
+        Global.global.left_down_low_value = left_down_low_def;
         left_down_Low.setText(String.valueOf(left_down_low_def));
-        Global.global.left_down_high_value=left_down_high_def;
+        Global.global.left_down_high_value = left_down_high_def;
         left_down_High.setText(String.valueOf(left_down_high_def));
 
-        Global.global.right_up_low_value=right_up_low_def;
+        Global.global.right_up_low_value = right_up_low_def;
         right_up_Low.setText(String.valueOf(right_up_low_def));
-        Global.global.right_up_high_value=right_up_high_def;
+        Global.global.right_up_high_value = right_up_high_def;
         right_up_High.setText(String.valueOf(right_up_high_def));
 
-        Global.global.right_down_low_value=right_down_low_def;
+        Global.global.right_down_low_value = right_down_low_def;
         right_down_Low.setText(String.valueOf(right_down_low_def));
-        Global.global.right_down_high_value=right_down_high_def;
+        Global.global.right_down_high_value = right_down_high_def;
         right_down_High.setText(String.valueOf(right_down_high_def));
 
-        Global.global.up_low_value=up_low_def;
+        Global.global.up_low_value = up_low_def;
         up_Low.setText(String.valueOf(up_low_def));
-        Global.global.up_high_value=up_high_def;
+        Global.global.up_high_value = up_high_def;
         up_High.setText(String.valueOf(up_high_def));
 
-        Global.global.down_low_value=down_low_def;
+        Global.global.down_low_value = down_low_def;
         down_Low.setText(String.valueOf(down_low_def));
-        Global.global.down_high_value=down_high_def;
+        Global.global.down_high_value = down_high_def;
         down_High.setText(String.valueOf(down_high_def));
 
-        Global.global.height_value=height_def;
+        Global.global.height_value = height_def;
         height.setText(String.valueOf(height_def));
-        Global.global.weight_value=weight_def;
+        Global.global.weight_value = weight_def;
         weight.setText(String.valueOf(weight_def));
 
-        Global.global.hoeoTime=hoeoTime_def;
+        Global.global.hoeoTime = hoeoTime_def;
         hoeoTime.setText(String.valueOf(hoeoTime_def));
 
-        Global.global.bindTime=bindTime_def;
+        Global.global.bindTime = bindTime_def;
         bindTime.setText(String.valueOf(bindTime_def));
 
-        Global.global.hoeoValidTime=hoeoValidTime_def;
+        Global.global.hoeoValidTime = hoeoValidTime_def;
         hoeoValidTime.setText(String.valueOf(hoeoValidTime_def));
-        
-        Global.global.hoeoVeryGood=hoeoVeryGood_def;
+
+        Global.global.hoeoVeryGood = hoeoVeryGood_def;
         hoeoVeryGood.setText(String.valueOf(hoeoVeryGood_def));
 
-        Global.global.hoeoGood=hoeoGood_def;
+        Global.global.hoeoGood = hoeoGood_def;
         hoeoGood.setText(String.valueOf(hoeoGood_def));
-        
-        Global.global.hoeoNormal=hoeoNormal_def;
+
+        Global.global.hoeoNormal = hoeoNormal_def;
         hoeoNormal.setText(String.valueOf(hoeoNormal_def));
 
-        Global.global.bindVeryGood=bindVeryGood_def;
+        Global.global.bindVeryGood = bindVeryGood_def;
         bindVeryGood.setText(String.valueOf(bindVeryGood_def));
 
-        Global.global.bindGood=bindGood_def;
+        Global.global.bindGood = bindGood_def;
         bindGood.setText(String.valueOf(bindGood_def));
 
-        Global.global.bindNormal=bindNormal_def;
+        Global.global.bindNormal = bindNormal_def;
         bindNormal.setText(String.valueOf(bindNormal_def));
 
-        Global.global.hoeoDelayTime=hoeoDelayTime_def;
+        Global.global.hoeoDelayTime = hoeoDelayTime_def;
         hoeoDelayTime.setText(String.valueOf(hoeoDelayTime_def));
 
-        Global.global.hoeoPressPunish=hoeoPressPunish_def;
+        Global.global.hoeoPressPunish = hoeoPressPunish_def;
         hoeoPressPunish.setText(String.valueOf(hoeoPressPunish_def));
 
-        Global.global.hoeoReleasePunish=hoeoReleasePunish_def;
+        Global.global.hoeoReleasePunish = hoeoReleasePunish_def;
         hoeoReleasePunish.setText(String.valueOf(hoeoReleasePunish_def));
 
-        Global.global.bindPressPunish=bindPressPunish_def;
+        Global.global.bindPressPunish = bindPressPunish_def;
         bindPressPunish.setText(String.valueOf(bindPressPunish_def));
 
-        Global.global.bindDelayTime=bindDelayTime_def;
+        Global.global.bindDelayTime = bindDelayTime_def;
         bindDelayTime.setText(String.valueOf(bindDelayTime_def));
 
     }

@@ -46,19 +46,14 @@ public class HoeostasisDataPage extends AppCompatActivity {
     Timer timer1;
     ArrayList<Float> Values = new ArrayList<Float>();
     ArrayList<Float> Times = new ArrayList<Float>();
-    int sampleDistance = 10;//采样的间距，在demo里面体现为每点击n次按钮才会显示一次
+    int sampleDistance = 10;//采样的间距，在demo里面体现为每点击n次按钮才会显示一次。实际上就是缓冲的大小，存满了就计算一次
     ArrayList<Float> storage = new ArrayList<Float>();
-    int lowerValue = 200;
-    int upperValue = 600;
     int Volumn = 2000;//满血是2000ml，即流血量大于这个就会休克
     int max = 600;
     int min = 200;
     //-------更新获取数据-------------
     float currentData;
     int lastNum = 0;
-    //-------用来计算是否放松的变量------
-    int relaxLowStress = 100;
-    int relaxHighStress = 200;
     boolean release = false;
     //----------------子模块---------
     GenerateData generateData;
@@ -98,7 +93,6 @@ public class HoeostasisDataPage extends AppCompatActivity {
 
         //手动调整max和min以测试
         generateData = new GenerateData(max, min);
-//        generateData = new GenerateData(700, 550);
         increaseModel = new HoeoIncreaseModel(max, min, Volumn, bleedspeed);
         relaxModel = new RelaxModel(min);
 
@@ -109,12 +103,6 @@ public class HoeostasisDataPage extends AppCompatActivity {
         percentText = findViewById(R.id.percent);
         changeImage();//
         heartBeat(1000);
-
-
-//        lowerValue = Global.global.left_up_low_value;
-//        upperValue = Global.global.left_up_high_value;
-//        System.out.println("xjh "+ Global.global.left_up_low_value);
-//        System.out.println("xjh" + Global.global.left_up_high_value);
 
         init();//初始化坐标数据
         Values.add(0.0f);
@@ -144,21 +132,13 @@ public class HoeostasisDataPage extends AppCompatActivity {
         chart.setCircleWidth(1f);
         chart.setBorderTextSize(15);//修改边框文字大小
         chart.setBrokenLineTextSize(10);//修改这线上文字大小
-//        chart.setMaxVlaue(600);
-//        int maxValue=750<max?max:750;
         int maxValue=20<max?max:20;
-//        chart.setMaxVlaue(750);
         chart.setMaxVlaue(maxValue);
         chart.setMinValue(0);
-        chart.setX_MaxVlaue(60*Global.global.hoeoTime);//这个应该就是训练时长，比如20min就是20*60
-        chart.setX_MinValue(0);
         chart.setNumberLine(4);//5根线
-        chart.setX_NumberLine(4);//5根线
         chart.setBorderWidth(1f);
         chart.setBrokenLineWidth(1.5f);
         chart.setBorderTransverseLineWidth(1.0f);//中间横线的宽度
-//        chart.setUpper((float) upperValue);//这两个就是上下限范围...
-//        chart.setLower((float) lowerValue);
         chart.setUpper((float) max);//这两个就是上下限范围...
         chart.setLower((float) min);
 
@@ -174,7 +154,7 @@ public class HoeostasisDataPage extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (count >= 180000) {//30s的时候
+                        if (count >= 180000) {//3min的时候
                             speed = 800;
                             //或许还可以加上其他的提示信息
                             infoText.setText("时间加速跳动到15min...");
@@ -184,8 +164,8 @@ public class HoeostasisDataPage extends AppCompatActivity {
                             release = true;//提示松开，之后的数据生成就是松开的数据...
                         }
                         count += speed;
-                        currentData = generateData.generate(release);
-                        //现在的currentData应该是从全局变量读取
+//                        currentData = generateData.generate(release);//之前是生成数据来进行测试
+                        //现在的currentData应该是从全局变量读取到传感器的数据
                         currentData=Global.global.pressure;
                         // 更改坐标表格
                         changeChart();
@@ -228,7 +208,6 @@ public class HoeostasisDataPage extends AppCompatActivity {
     private void changeChart() {
         DrawLineChart chart = findViewById(R.id.chart);
         float data;
-        // 可以写成一个函数来模拟生成这里的data
         data = currentData;
         storage.add(data);
         if (storage.size() == sampleDistance) {//存满了之后才计算一次。
@@ -249,10 +228,8 @@ public class HoeostasisDataPage extends AppCompatActivity {
             for (final Float value : Times) {
                 minutes[index++] = value;
             }
-            chart.setValue(floats);
-            chart.setTime(minutes);
-//            chart.setX_MaxVlaue(count/1000.0f);
-            chart.setCurrent_maxVlaue(count/1000.0f);
+            chart.setValue(floats);//纵坐标（压力值）的数组
+            chart.setTime(minutes);//横坐标（时间）的数组
             chart.invalidate();//重绘
             storage.clear();
             //最后再修改text
@@ -319,7 +296,6 @@ public class HoeostasisDataPage extends AppCompatActivity {
         bleedText.setText("失血量：" + String.format("%.2f", increaseModel.lose));//应该保留两位小数
         percentText.setText(String.valueOf(increaseModel.percent));
         validTimeText.setText(getStringTime(increaseModel.validTime));
-//        System.out.println(increaseModel.validTime);
         if(increaseModel.validTime >= Global.global.hoeoValidTime*60*1000)
             infoText.setText("请稍微放松止血带");
     }

@@ -24,86 +24,83 @@ public class Bluno_demo extends BlunoLibrary {
     private EditText serialSendText;
     private TextView serialReceivedText;
     public static final int ACCESS_LOCATION = 1;
-    boolean inOrOut=false;
     Global app;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluno_demo);
         getPermission();//授权
 
-        onCreateProcess();														//onCreate Process by BlunoLibrary
-        inOrOut=false;
-        app=(Global)getApplication();
+        onCreateProcess();                                                        //onCreate Process by BlunoLibrary
+        app = (Global) getApplication();
 
-        serialBegin(115200);													//set the Uart Baudrate on BLE chip to 115200
+        serialBegin(115200);                                                    //set the Uart Baudrate on BLE chip to 115200
 
-        serialReceivedText=(TextView) findViewById(R.id.serialReveicedText);	//initial the EditText of the received data
-        serialSendText=(EditText) findViewById(R.id.serialSendText);			//initial the EditText of the sending data
+        serialReceivedText = (TextView) findViewById(R.id.serialReveicedText);    //initial the EditText of the received data
+        serialSendText = (EditText) findViewById(R.id.serialSendText);            //initial the EditText of the sending data
 
-        buttonSerialSend = (Button) findViewById(R.id.buttonSerialSend);		//initial the button for sending the data
+        buttonSerialSend = (Button) findViewById(R.id.buttonSerialSend);        //initial the button for sending the data
         buttonSerialSend.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
 
-                serialSend(serialSendText.getText().toString());				//send the data to the BLUNO
+                serialSend(serialSendText.getText().toString());                //send the data to the BLUNO
             }
         });
 
-        buttonScan = (Button) findViewById(R.id.buttonScan);					//initial the button for scanning the BLE device
+        buttonScan = (Button) findViewById(R.id.buttonScan);                    //initial the button for scanning the BLE device
         buttonScan.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
 
-                buttonScanOnClickProcess();										//Alert Dialog for selecting the BLE device
+                buttonScanOnClickProcess();                                        //Alert Dialog for selecting the BLE device
             }
         });
     }
 
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         System.out.println("BlUNOActivity onResume");
-        onResumeProcess();														//onResume Process by BlunoLibrary
+        onResumeProcess();                                                        //onResume Process by BlunoLibrary
     }
-
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        onActivityResultProcess(requestCode, resultCode, data);					//onActivityResult Process by BlunoLibrary
+        onActivityResultProcess(requestCode, resultCode, data);                    //onActivityResult Process by BlunoLibrary
         super.onActivityResult(requestCode, resultCode, data);//打开蓝牙失败就finish
     }
-    private static final String TAG= "Bluno";
+
+    private static final String TAG = "Bluno";
+
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i(TAG,"onPause");
-        inOrOut=true;
+        Log.i(TAG, "onPause");
 //        onPauseProcess();														//onPause Process by BlunoLibrary
     }
 
     protected void onStop() {
         super.onStop();
-        inOrOut=true;
-        Log.i(TAG,"onStop");
+        Log.i(TAG, "onStop");
 //        onStopProcess();														//onStop Process by BlunoLibrary
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        inOrOut=true;
-        Log.i(TAG,"onDestroy");
+        Log.i(TAG, "onDestroy");
 //        onDestroyProcess();														//onDestroy Process by BlunoLibrary
     }
 
     @Override
     public void onConectionStateChange(connectionStateEnum theConnectionState) {//Once connection state changes, this function will be called
-        switch (theConnectionState) {											//Four connection state
+        switch (theConnectionState) {                                            //Four connection state
             case isConnected:
                 buttonScan.setText("连接成功");
                 break;
@@ -125,25 +122,17 @@ public class Bluno_demo extends BlunoLibrary {
     }
 
     @Override
-    public void onSerialReceived(String theString) {							//Once connection data received, this function will be called
+    public void onSerialReceived(String theString) {                            //Once connection data received, this function will be called
         // TODO Auto-generated method stub
-//        if(!inOrOut)
-//        
-            serialReceivedText.append(theString);							//append the text into the EditText
-            //The Serial data from the BLUNO may be sub-packaged, so using a buffer to hold the String is a good choice.
-            ((ScrollView)serialReceivedText.getParent()).fullScroll(View.FOCUS_DOWN);
+        serialReceivedText.append(theString);                            //append the text into the EditText
+        //The Serial data from the BLUNO may be sub-packaged, so using a buffer to hold the String is a good choice.
+        ((ScrollView) serialReceivedText.getParent()).fullScroll(View.FOCUS_DOWN);
 //            System.out.println("msg:"+app.pressure);
-//        }
-//        else{
-//            //就不用那么复杂的append，在这里就直接修改全局变量就行了
-//            System.out.println("app.down_High");
-//        }
     }
 
     //下面这一段是为了获取到权限，才能够扫描得到设备
     @SuppressLint("WrongConstant")
     private void getPermission() {
-//		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             System.out.println("ok!!!!!");
             int permissionCheck = 0;
