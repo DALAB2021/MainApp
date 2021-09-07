@@ -161,7 +161,7 @@ public class BindDataPage extends AppCompatActivity {
                 floats[index++] = value;
             }
             chart.setValue(floats);
-            chart.setX_MaxVlaue(count/1000.0f);
+//            chart.setX_MaxVlaue(count/1000.0f);
             chart.invalidate();//重绘
             storage.clear();
             //最后再修改text
@@ -193,10 +193,10 @@ public class BindDataPage extends AppCompatActivity {
 //        chart.setMaxVlaue(45);
         chart.setMaxVlaue(maxValue);
         chart.setMinValue(0);
-        chart.setX_MaxVlaue(12000);
-        chart.setX_MinValue(0);
+//        chart.setX_MaxVlaue(12000);
+//        chart.setX_MinValue(0);
         chart.setNumberLine(4);//5根线
-        chart.setX_NumberLine(4);//5根线
+//        chart.setX_NumberLine(4);//5根线
         chart.setBorderWidth(1f);
         chart.setBrokenLineWidth(1.5f);
         chart.setBorderTransverseLineWidth(1.0f);//中间横线的宽度
