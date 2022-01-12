@@ -126,7 +126,8 @@ public class MainPage extends AppCompatActivity {
                             return;//如果侧边栏是打开状态，那么就提前跳出，不会响应按钮——防止和底层按钮的冲突
                         }
                         Intent intent = new Intent();
-                        intent.setClass(MainPage.this, Bluno_demo.class);
+//                        intent.setClass(MainPage.this, Bluno_demo.class);
+                        intent.setClass(MainPage.this, BlueTooth.class);//这样就可以跳到bluetooth的界面去了
                         startActivity(intent);
                     }
                 }
