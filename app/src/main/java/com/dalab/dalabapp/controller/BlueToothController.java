@@ -5,14 +5,13 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 //蓝牙适配器
 public class BlueToothController {
-    private BluetoothAdapter mAdapter;
+    private BluetoothAdapter mAdapter; //本机蓝牙适配器
     public BlueToothController()
     {
         mAdapter=BluetoothAdapter.getDefaultAdapter();
@@ -33,7 +32,9 @@ public class BlueToothController {
     public BluetoothAdapter getAdapter() {
         return mAdapter;
     }
+
     //判断当前蓝牙状态
+    //true打开，false关闭
     public boolean getBlueToothStatus()
     {
         assert (mAdapter!=null);
@@ -43,7 +44,7 @@ public class BlueToothController {
     public void turnOnBlueTooth(Activity activity,int requestCode)
     {
         Intent intent=new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        activity.startActivityForResult(intent,requestCode);
+        activity.startActivityForResult(intent,requestCode);//这里的“result”就是BlueTooth文件里面onActivityResult函数的result
         //mAdapter.enable();//这个函数通常是系统自动调用的,不推荐手动调用
     }
     //关闭蓝牙
@@ -64,7 +65,14 @@ public class BlueToothController {
 
         }
     }
-
+    /**
+     * 打开蓝牙可见性
+     */
+    public void enableVisibily(Context context){
+        Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,300);
+        context.startActivity(intent);
+    }
     //查找设备
     public void findDevice()
     {

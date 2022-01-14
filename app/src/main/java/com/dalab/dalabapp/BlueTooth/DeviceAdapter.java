@@ -64,7 +64,7 @@ public class DeviceAdapter extends BaseAdapter {
     public void refresh(List<BluetoothDevice> data)
     {
         mData=data;
-        notifyDataSetChanged();//告诉adapter改变了
+        notifyDataSetChanged();//告诉adapter改变了——观察者模式
     }
 }
 

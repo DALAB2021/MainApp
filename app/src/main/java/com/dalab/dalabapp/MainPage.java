@@ -1,10 +1,8 @@
 package com.dalab.dalabapp;
 
-import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,18 +19,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.dalab.dalabapp.Adapter.ListAdapter;
-import com.dalab.dalabapp.Animation.Animation;
-import com.dalab.dalabapp.BlueTooth.BlueTooth;
-import com.dalab.dalabapp.BlueTooth.DeviceAdapter;
-import com.dalab.dalabapp.Bluno.Bluno_demo;
+import com.dalab.dalabapp.BlueTooth.Maizi;
 import com.dalab.dalabapp.Trains.BindPage;
 import com.dalab.dalabapp.Trains.Hemostasis;
-import com.dalab.dalabapp.constant.BoundValue;
 import com.dalab.dalabapp.constant.Global;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainPage extends AppCompatActivity {
     DrawerLayout mDrawerLayout;
@@ -127,7 +118,8 @@ public class MainPage extends AppCompatActivity {
                         }
                         Intent intent = new Intent();
 //                        intent.setClass(MainPage.this, Bluno_demo.class);
-                        intent.setClass(MainPage.this, BlueTooth.class);//这样就可以跳到bluetooth的界面去了
+//                        intent.setClass(MainPage.this, BlueTooth.class);//这样就可以跳到bluetooth的界面去了
+                        intent.setClass(MainPage.this, Maizi.class);//这样就可以跳到maizibluetooth的界面去了
                         startActivity(intent);
                     }
                 }

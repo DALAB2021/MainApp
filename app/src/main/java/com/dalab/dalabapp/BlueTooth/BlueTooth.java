@@ -24,13 +24,17 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dalab.dalabapp.R;
+import com.dalab.dalabapp.connect.AcceptThread;
+import com.dalab.dalabapp.connect.ConnectThread;
+import com.dalab.dalabapp.connect.Constant;
+import com.dalab.dalabapp.controller.BlueToothController;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BlueTooth extends AppCompatActivity {
-    private com.dalab.dalabapp.controller.BlueToothController mController = new com.dalab.dalabapp.controller.BlueToothController();
+    private BlueToothController mController = new BlueToothController();
     private Toast mToast;
     private TextView logView;
     public static final int REQUEST_CODE = 0;
@@ -40,10 +44,10 @@ public class BlueTooth extends AppCompatActivity {
     private List<BluetoothDevice> mBondedDeviceList = new ArrayList<>();
     private ListView mListView;
     private ProgressBar progressBar;
-    private DeviceAdapter mAdapter;
+    private DeviceAdapter mAdapter;//这是自定义的一个adapter，注意区分controller里面的那个本地适配器
 
-    private com.dalab.dalabapp.connect.AcceptThread mAcceptThread;
-    private com.dalab.dalabapp.connect.ConnectThread mConnectThread;
+    private AcceptThread mAcceptThread;
+    private ConnectThread mConnectThread;
     private Handler mUIHandler = new MyHandler();
 
 
@@ -76,9 +80,11 @@ public class BlueTooth extends AppCompatActivity {
     //广播注册action
     private void registerBluetoothReceiver()
     {
-        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);//当action状态改变的时候会收到广播
-        registerReceiver(receiver, filter);
+        //监控打开蓝牙过程的广播
+//        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);//当蓝牙action状态改变的时候会收到广播
+//        registerReceiver(receiver, filter);
 
+        //检测蓝牙扫描连接绑定过程的广播
         IntentFilter lookFilter = new IntentFilter();
         //开始查找
         lookFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
@@ -86,8 +92,10 @@ public class BlueTooth extends AppCompatActivity {
         lookFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         //找到设备
         lookFilter.addAction(BluetoothDevice.ACTION_FOUND);
-        //设备扫描模式改变
+
+        //设备扫描模式改变。就是蓝牙可见还是不可见的状态变化
         lookFilter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+
         //绑定状态
         lookFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         registerReceiver(mReceiver, lookFilter);
@@ -95,7 +103,7 @@ public class BlueTooth extends AppCompatActivity {
 
 
 
-    //此外还需要一个广播来检测本机蓝牙状态
+    //此外还需要一个广播来检测本机蓝牙状态，（用于蓝牙打开过程）
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -133,12 +141,12 @@ public class BlueTooth extends AppCompatActivity {
                 mDeviceList.clear();
                 mAdapter.notifyDataSetChanged();
             }
-            if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+            else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 logView.setText("ACTION_DISCOVERY_FINISHED");
 //                setProgressBarIndeterminateVisibility(false);
                 progressBar.setVisibility(View.GONE);
             }
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+            else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 logView.setText("Found One");
 
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
@@ -171,13 +179,13 @@ public class BlueTooth extends AppCompatActivity {
                 }
 
             }
-            if (BluetoothAdapter.ACTION_SCAN_MODE_CHANGED.equals(action))//字符串的比较,把常量放前面
+            else if (BluetoothAdapter.ACTION_SCAN_MODE_CHANGED.equals(action))//字符串的比较,把常量放前面
             {
 //                logView.setText("scanMode");
                 int scanMode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, 0);//获取当前的mode
 //                logView.setText( String.valueOf(scanMode));
 //                logView.setText(String.valueOf(0));
-                if (scanMode == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+                if (scanMode == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {//在可被搜索的范围
 //                    setProgressBarIndeterminateVisibility(true);//进度条
                     progressBar.setVisibility(View.VISIBLE);
                 } else {
@@ -186,7 +194,7 @@ public class BlueTooth extends AppCompatActivity {
                 }
 
             }
-            if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {//绑定状态改变之后的回调
+            else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {//绑定状态改变之后的回调
                 logView.setText("ACTION_BOND_STATE_CHANGED");
                 BluetoothDevice remoteDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (remoteDevice == null) {
@@ -239,7 +247,8 @@ public class BlueTooth extends AppCompatActivity {
 
     //打开可见性
     public void enableVisibly(View view) {
-        mController.enableVisibly(this);//上下文
+//        mController.enableVisibly(this);//上下文
+        mController.enableVisibily(this);
     }
 
     //发现设备
@@ -264,55 +273,56 @@ public class BlueTooth extends AppCompatActivity {
     public void startListening(View view)
     {
         //启动一个线程
-//        if( mAcceptThread != null) {
-//            mAcceptThread.cancel();
-//        }
-//        mAcceptThread = new AcceptThread(mController.getAdapter(), mUIHandler);
-//        mAcceptThread.start();
-        com.dalab.dalabapp.controller.ChatController.getInstance().waitingForFriends(mController.getAdapter(), mUIHandler);
+        if( mAcceptThread != null) {
+            mAcceptThread.cancel();
+        }
+        mAcceptThread = new AcceptThread(mController.getAdapter(), mUIHandler);
+        mAcceptThread.start();
+//        com.dalab.dalabapp.controller.ChatController.getInstance().waitingForFriends(mController.getAdapter(), mUIHandler);
         logView.setText("开始监听");
     }
 
     //停止监听
     public void stopListening(View view)
     {
-//        if(mAcceptThread!=null)
-//        {
-//            mAcceptThread.cancel();
-//        }
-        com.dalab.dalabapp.controller.ChatController.getInstance().stopListening();
+        if(mAcceptThread!=null)
+        {
+            mAcceptThread.cancel();
+        }
+//        com.dalab.dalabapp.controller.ChatController.getInstance().stopListening();
         logView.setText("结束监听");
     }
 
     //断开连接
     public void disconnect(View view)
     {
-//        if(mConnectThread!=null)
-//        {
-//            mConnectThread.cancel();
-//        }
-        com.dalab.dalabapp.controller.ChatController.getInstance().disconnect();
+        if(mConnectThread!=null)
+        {
+            mConnectThread.cancel();
+        }
+//        com.dalab.dalabapp.controller.ChatController.getInstance().disconnect();
         logView.setText("断开连接");
     }
 
     //发送hello
     public void sayHello(View view)
     {
-//        say("Hello");
+        say("Hello");
         //sendMessage
-        com.dalab.dalabapp.controller.ChatController.getInstance().sendMessage("Hello");
+//        com.dalab.dalabapp.controller.ChatController.getInstance().sendMessage("Hello");
         logView.setText("say Hello");
     }
     private void say(String word) {
         if (mAcceptThread != null) {
+            showToast("mAcceptThread != null");
             try {
                 mAcceptThread.sendData(word.getBytes("utf-8"));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         }
-
         else if( mConnectThread != null) {
+            showToast("mConnectThread != null");
             try {
                 mConnectThread.sendData(word.getBytes("utf-8"));
             } catch (UnsupportedEncodingException e) {
@@ -327,21 +337,27 @@ public class BlueTooth extends AppCompatActivity {
         public void handleMessage(Message message) {
             super.handleMessage(message);
             switch (message.what) {
-                case com.dalab.dalabapp.connect.Constant.MSG_GOT_DATA:
-                    //showToast("data:" + String.valueOf(message.obj));
+                case Constant.MSG_GOT_DATA:
+                    showToast("data:" + String.valueOf(message.obj));
                     byte[] data=(byte[])message.obj;
-                    showToast("data:" + com.dalab.dalabapp.controller.ChatController.getInstance().decodeMessage(data)+"\n");//解码之后的消息
+//                    showToast("data:" + com.dalab.dalabapp.controller.ChatController.getInstance().decodeMessage(data)+"\n");//解码之后的消息
                     break;
-                case com.dalab.dalabapp.connect.Constant.MSG_ERROR:
+                case Constant.MSG_ERROR:
                     showToast("error:" + String.valueOf(message.obj));
                     break;
-                case com.dalab.dalabapp.connect.Constant.MSG_CONNECTED_TO_SERVER:
+                case Constant.MSG_CONNECTED_TO_SERVER:
                     //进入聊天模式（？
                     showToast("连接到服务端");
                     break;
-                case com.dalab.dalabapp.connect.Constant.MSG_GOT_A_CLINET:
-                    showToast("找到服务端");
+                case Constant.MSG_GOT_A_CLINET:
+                    showToast("找到一个客户端");
                     break;
+                case Constant.MSG_START_LISTENING:
+                    showToast("服务端开始监听");
+                    break;
+//                case com.dalab.dalabapp.connect.Constant.MSG_FINISH_LISTENING:
+//                    showToast("服务端结束监听");
+//                    break;
             }
         }
     }
@@ -371,7 +387,13 @@ public class BlueTooth extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             BluetoothDevice device = mBondedDeviceList.get(i);
-            com.dalab.dalabapp.controller.ChatController.getInstance().startChat(device, mController.getAdapter(), mUIHandler);
+
+            if (mConnectThread != null) {
+                mConnectThread.cancel();
+            }
+            mConnectThread = new ConnectThread(device, mController.getAdapter(), mUIHandler);//把网络数据发到UI...
+            mConnectThread.start();
+//            com.dalab.dalabapp.controller.ChatController.getInstance().startChat(device, mController.getAdapter(), mUIHandler);
         }
     };
 
@@ -426,7 +448,7 @@ public class BlueTooth extends AppCompatActivity {
         if (mConnectThread != null) {
             mConnectThread.cancel();
         }
-        unregisterReceiver(receiver);
+//        unregisterReceiver(receiver);
         unregisterReceiver(mReceiver);
     }
 }
