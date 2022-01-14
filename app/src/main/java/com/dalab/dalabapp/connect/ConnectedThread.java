@@ -38,9 +38,14 @@ public class ConnectedThread extends Thread {
         // 持续监听InputStream，直到出现异常
         while (true) {
             try {
-
                 // 从InputStream读取数据
+                Log.d("buffer ", "before wrong" );
+                if(mmInStream!=null)
+                {
+                    Log.d("buffer ", "not null" );
+                }
                 bytes = mmInStream.read(buffer);
+                Log.d("buffer ", "after wrong" );
                 // 将获得的bytes发送到UI层activity
                 if( bytes >0) {
                     Message message = mHandler.obtainMessage(Constant.MSG_GOT_DATA, new String(buffer, 0, bytes, "utf-8"));
@@ -48,6 +53,7 @@ public class ConnectedThread extends Thread {
                 }
                 Log.d("GOTMSG", "message size" + bytes);
             } catch (IOException e) {
+                Log.d("IOException", "message wrong" );
                 mHandler.sendMessage(mHandler.obtainMessage(Constant.MSG_ERROR, e));
                 break;
             }

@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public class ConnectThread extends Thread {
     private static final UUID MY_UUID = UUID.fromString(Constant.CONNECTTION_UUID);
-    private final BluetoothSocket mmSocket;
+    private  BluetoothSocket mmSocket;
     private final BluetoothDevice mmDevice;
     private BluetoothAdapter mBluetoothAdapter;
     private final Handler mHandler;
@@ -38,6 +38,9 @@ public class ConnectThread extends Thread {
         try {
             // 通过socket连接设备，阻塞运行直到成功或抛出异常时
             mmSocket.connect();
+
+//            mmSocket =(BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(mmDevice,1);
+
         } catch (Exception connectException) {
             mHandler.sendMessage(mHandler.obtainMessage(Constant.MSG_ERROR, connectException));
             // 如果无法连接则关闭socket并退出

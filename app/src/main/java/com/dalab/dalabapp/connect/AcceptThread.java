@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * 监听连接申请的线程
+ * 服务器端监听连接申请的线程
  */
 public class AcceptThread extends Thread {
     private static final String NAME = "BlueToothClass";
@@ -16,7 +16,7 @@ public class AcceptThread extends Thread {
 
     private final BluetoothServerSocket mmServerSocket;
     private final BluetoothAdapter mBluetoothAdapter;
-    private final Handler mHandler;
+    private final Handler mHandler;//通过handler把结果返回给UI
     private ConnectedThread mConnectedThread;//需要创建一个新的socket的过程，
 
     public AcceptThread(BluetoothAdapter adapter, Handler handler) {
@@ -26,7 +26,7 @@ public class AcceptThread extends Thread {
         BluetoothServerSocket tmp = null;
         try {
             // MY_UUID是应用程序的UUID，客户端代码使用相同的UUID
-            tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord(NAME, MY_UUID);//Name无所谓，UUID不能随便写
+            tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord(NAME, MY_UUID);//创建服务器端的socket//Name无所谓，UUID不能随便写
         } catch (IOException e) { }
         mmServerSocket = tmp;
     }
@@ -36,7 +36,7 @@ public class AcceptThread extends Thread {
         //持续监听，直到出现异常或返回socket
         while (true) {
             try {
-                mHandler.sendEmptyMessage(Constant.MSG_START_LISTENING);
+                mHandler.sendEmptyMessage(Constant.MSG_START_LISTENING);//发消息告诉UI我现在要进入监听状态
                 socket = mmServerSocket.accept();//获取一个新的socket
             } catch (IOException e) {
                 mHandler.sendMessage(mHandler.obtainMessage(Constant.MSG_ERROR, e));
@@ -58,7 +58,7 @@ public class AcceptThread extends Thread {
     }
 
     private void manageConnectedSocket(BluetoothSocket socket) {
-        //只支持同时处理一个连接
+        //一个服务器只支持同时处理一个连接
         if( mConnectedThread != null) {
             mConnectedThread.cancel();//把之前的客户端给踢掉
         }

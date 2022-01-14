@@ -5,8 +5,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-<!--    添加位置信息访问权限-->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" /> <!-- 添加位置信息访问权限 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- ACCESS_FINE_LOCATION：允许一个程序访问精确位置(如GPS） -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -18,11 +17,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".Bluno.Bluno_demo"
-            android:launchMode="singleInstance"></activity>
-
-
+        <activity android:name=".BlueTooth.Maizi"></activity>
+        <activity
+            android:name=".Bluno.Bluno_demo"
+            android:launchMode="singleInstance" />
         <activity
             android:name=".MainPage"
             android:label="@string/app_name"
@@ -42,11 +40,13 @@
         <activity android:name=".TrainingPages.TrainingBind" />
         <activity android:name=".DataPage.HoeostasisDataPage" />
         <activity android:name=".TrainingPages.ResHomeostasis" />
-        <activity android:name=".TrainingPages.ResBind"/>
-        <service android:name="com.dalab.dalabapp.Bluno.BluetoothLeService" android:enabled="true"/>
+        <activity android:name=".TrainingPages.ResBind" />
 
-        <activity android:name=".DataPage.BindDataPage"/>
+        <service
+            android:name=".Bluno.BluetoothLeService"
+            android:enabled="true" />
 
+        <activity android:name=".DataPage.BindDataPage" />
     </application>
 
 </manifest>
